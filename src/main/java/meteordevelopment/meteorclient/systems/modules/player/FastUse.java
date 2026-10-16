@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
+
 public class FastUse extends Module {
     public enum Mode {
         All,
@@ -53,6 +55,22 @@ public class FastUse extends Module {
         .build()
     );
 
+    // Wurst-inspired FastPlace behavior, merged into FastUse rather than creating a duplicate module.
+    private final Setting<Boolean> fastPlace = sgGeneral.add(new BoolSetting.Builder()
+        .name("fast-place")
+        .description("Also clears Minecraft's right-click delay every tick to speed up block placement.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Boolean> fastPlaceBlocksOnly = sgGeneral.add(new BoolSetting.Builder()
+        .name("fast-place-blocks-only")
+        .description("Only clear the right-click delay while holding a placeable block.")
+        .defaultValue(true)
+        .visible(fastPlace::get)
+        .build()
+    );
+
     public FastUse() {
         super(Categories.Player, "fast-use", "Allows you to use items at very high speeds.");
     }
@@ -62,6 +80,12 @@ public class FastUse extends Module {
             return cooldown.get();
         }
         return 4; //default cooldown
+    }
+
+    public boolean shouldResetRightClickDelay() {
+        if (!fastPlace.get()) return false;
+        if (!fastPlaceBlocksOnly.get()) return true;
+        return mc.player != null && mc.player.getMainHandItem().getItem() instanceof BlockItem;
     }
 
     private boolean shouldWorkSome(ItemStack itemStack) {
