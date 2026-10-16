@@ -38,11 +38,15 @@ public final class NoxaraMainPanel extends NoxaraPanel {
         add(new HintLabel()).padHorizontal(18).padBottom(1);
 
         moduleView = theme.view();
-        moduleView.spacing = 7;
+        moduleView.spacing = 4;
         moduleView.hasScrollBar = true;
         moduleView.scrollOnlyWhenMouseOver = true;
-        updateViewport();
+
+        // WView.init() resets its default maxHeight, so attach/initialize it before
+        // applying the dashboard's viewport. Otherwise its first layout uses nearly
+        // the entire screen height and the module rows bleed outside this panel.
         add(moduleView).expandX().padHorizontal(13).padBottom(12);
+        updateViewport();
     }
 
     public String searchText() {
@@ -52,10 +56,10 @@ public final class NoxaraMainPanel extends NoxaraPanel {
     public void updateViewport() {
         if (moduleView == null) return;
 
-        // The list receives the space left after the heading, search box, hint, padding,
-        // and gaps. Derive this from the panel's actual allocated height so resizing does
-        // not leave a large dead strip at the bottom or compress the list unnecessarily.
-        double nextHeight = Math.max(theme.scale(110), height - theme.scale(156));
+        // Use the dashboard's known window geometry instead of this panel's height:
+        // on first init the panel height is still zero while widgets are being created.
+        // This keeps the initial list viewport correct before the first layout pass.
+        double nextHeight = Math.max(theme.scale(110), dashboard.contentHeight() - theme.scale(156));
         if (Math.abs(nextHeight - lastViewportHeight) > 0.5) {
             lastViewportHeight = nextHeight;
             moduleView.maxHeight = nextHeight;
@@ -79,7 +83,7 @@ public final class NoxaraMainPanel extends NoxaraPanel {
         } else {
             for (Module module : modules) {
                 moduleView.add(new NoxaraModuleCard(dashboard, module))
-                    .expandX().padHorizontal(3).padVertical(2);
+                    .expandX().padHorizontal(3).padVertical(1);
             }
         }
 
