@@ -96,6 +96,14 @@ public class SpeedMine extends Module {
         .build()
     );
 
+    private final Setting<Boolean> legitMode = sgWurstFastBreak.add(new BoolSetting.Builder()
+        .name("legit-mode")
+        .description("Only removes the block-break cooldown; disables early finish packets.")
+        .defaultValue(false)
+        .visible(() -> mode.get() == Mode.Damage && fastBreak.get())
+        .build()
+    );
+
     private final Setting<Double> activationChance = sgWurstFastBreak.add(new DoubleSetting.Builder()
         .name("activation-chance")
         .description("Chance that FastBreak sends an early block-finish packet.")
@@ -104,14 +112,6 @@ public class SpeedMine extends Module {
         .max(100)
         .sliderMax(100)
         .visible(() -> mode.get() == Mode.Damage && fastBreak.get() && !legitMode.get())
-        .build()
-    );
-
-    private final Setting<Boolean> legitMode = sgWurstFastBreak.add(new BoolSetting.Builder()
-        .name("legit-mode")
-        .description("Only removes the block-break cooldown; disables early finish packets.")
-        .defaultValue(false)
-        .visible(() -> mode.get() == Mode.Damage && fastBreak.get())
         .build()
     );
 

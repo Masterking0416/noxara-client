@@ -72,6 +72,7 @@ public class SpeedNuker extends Module {
         .description("The break range (Wurst SpeedNuker uses a 1–6 block range).")
         .defaultValue(5)
         .min(1)
+        .max(6)
         .sliderMax(6)
         .visible(() -> shape.get() != Shape.Cube)
         .build()
