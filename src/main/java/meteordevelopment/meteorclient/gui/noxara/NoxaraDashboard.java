@@ -154,7 +154,11 @@ public final class NoxaraDashboard extends WContainer {
         double windowContentWidth = Math.max(theme.scale(240), windowWidth - outerInset * 2);
         double sidebarWidth = Math.min(theme.scale(174), Math.max(theme.scale(136), windowWidth * 0.235));
         double mainWidth = Math.max(theme.scale(230), windowContentWidth - sidebarWidth - theme.scale(10));
-        return Math.max(theme.scale(180), mainWidth - theme.scale(94));
+        double widthInPixels = Math.max(theme.scale(180), mainWidth - theme.scale(94));
+        // WMultiLabel applies theme.scale(maxWidth) internally, so store this width
+        // in theme units rather than passing it a physical-pixel measurement.
+        double scaleFactor = theme.scale(1);
+        return widthInPixels / (scaleFactor > 0.001 ? scaleFactor : 1);
     }
 
     public void updateViewport() {
@@ -319,6 +323,8 @@ public final class NoxaraDashboard extends WContainer {
             windowWidth = resizeStartWidth + mouseX - resizeStartMouseX;
             windowHeight = resizeStartHeight + mouseY - resizeStartMouseY;
             clampWindowToScreen();
+            // Recompute text wrapping and the list viewport before the next layout pass.
+            if (mainPanel != null) mainPanel.updateViewport();
             invalidate();
         }
     }

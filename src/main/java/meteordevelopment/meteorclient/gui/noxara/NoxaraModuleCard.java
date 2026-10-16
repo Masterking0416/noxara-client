@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.gui.noxara;
 
+import meteordevelopment.meteorclient.gui.widgets.WMultiLabel;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
@@ -37,6 +38,10 @@ public final class NoxaraModuleCard extends NoxaraPanel {
         return expanded;
     }
 
+    public void updateViewport() {
+        if (settingsPanel != null) settingsPanel.updateViewport();
+    }
+
     public void toggleExpanded() {
         expanded = !expanded;
         if (expanded) {
@@ -63,6 +68,7 @@ public final class NoxaraModuleCard extends NoxaraPanel {
     private static final class NoxaraSettingsPanel extends NoxaraPanel {
         private final Module module;
         private final NoxaraDashboard dashboard;
+        private WMultiLabel descriptionLabel;
         private WContainer settingsWidget;
 
         private NoxaraSettingsPanel(Module module, NoxaraDashboard dashboard) {
@@ -75,8 +81,9 @@ public final class NoxaraModuleCard extends NoxaraPanel {
         @Override
         public void init() {
             add(theme.label("SETTINGS", true)).padHorizontal(10).padTop(8).padBottom(1);
-            add(theme.label(module.description, dashboard.settingsDescriptionWidth()))
-                .expandX().padHorizontal(10).padBottom(5);
+            var description = theme.label(module.description, dashboard.settingsDescriptionWidth());
+            if (description instanceof WMultiLabel multiLabel) descriptionLabel = multiLabel;
+            add(description).expandX().padHorizontal(10).padBottom(5);
 
             settingsWidget = (WContainer) theme.settings(module.settings);
             settingsWidget.minWidth = 0;
@@ -85,6 +92,12 @@ public final class NoxaraModuleCard extends NoxaraPanel {
             WButton fullSettings = theme.button("More settings & keybinds");
             fullSettings.action = () -> mc.gui.setScreen(theme.moduleScreen(module));
             add(fullSettings).right().pad(9);
+        }
+
+        private void updateViewport() {
+            if (descriptionLabel != null) {
+                descriptionLabel.setMaxWidth(dashboard.settingsDescriptionWidth());
+            }
         }
 
         private WContainer settingsWidget() {

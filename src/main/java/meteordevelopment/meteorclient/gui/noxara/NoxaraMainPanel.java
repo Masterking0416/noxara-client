@@ -61,6 +61,12 @@ public final class NoxaraMainPanel extends NoxaraPanel {
             moduleView.maxHeight = nextHeight;
             moduleView.invalidate();
         }
+
+        // Expanded descriptions use a max-width setting to calculate their line
+        // layout, so update it before the next calculateSize() when the window resizes.
+        for (var cell : moduleView.cells) {
+            if (cell.widget() instanceof NoxaraModuleCard card) card.updateViewport();
+        }
     }
 
     public void refreshModules() {
