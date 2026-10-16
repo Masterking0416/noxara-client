@@ -28,7 +28,6 @@ public final class NoxaraModuleButton extends WWidget {
     private double hoverProgress;
     private double toggleProgress;
     private String displayedTitle = "";
-    private String displayedDescription = "";
     private final Color surfaceColor = new Color(0, 0, 0, 255);
     private final Color toggleColor = new Color(0, 0, 0, 255);
 
@@ -42,15 +41,16 @@ public final class NoxaraModuleButton extends WWidget {
 
     @Override
     protected void onCalculateSize() {
-        width = theme.scale(330);
-        height = theme.scale(58);
+        // Compact single-line rows reduce visual noise and give the module list
+        // more breathing room. Full descriptions remain available as hover tooltips.
+        width = theme.scale(300);
+        height = theme.scale(42);
     }
 
     @Override
     protected void onCalculateWidgetPositions() {
         double reserved = theme.scale(98);
         displayedTitle = NoxaraStyle.clipText(module.title, width - theme.scale(26) - reserved, theme);
-        displayedDescription = NoxaraStyle.clipText(module.description, width - theme.scale(30), theme);
     }
 
     @Override
@@ -65,12 +65,12 @@ public final class NoxaraModuleButton extends WWidget {
         if (hoverProgress > 0.01 || active) {
             NoxaraStyle.mix(surfaceColor, active ? NoxaraStyle.CARD_ACTIVE : NoxaraStyle.CARD,
                 NoxaraStyle.CARD_HOVER, hoverProgress);
-            NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(8), surfaceColor);
+            NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(6), surfaceColor);
         }
 
-        renderer.text(displayedTitle, x + theme.scale(12), y + theme.scale(9),
+        renderer.text(displayedTitle, x + theme.scale(12),
+            y + (height - theme.textHeight()) / 2,
             active ? NoxaraStyle.LAVENDER : NoxaraStyle.TEXT, false);
-        renderer.text(displayedDescription, x + theme.scale(12), y + theme.scale(32), NoxaraStyle.MUTED, false);
 
         // Expander is placed just left of the switch.
         double arrowSize = theme.scale(9);
