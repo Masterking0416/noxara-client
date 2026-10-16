@@ -11,7 +11,6 @@ import meteordevelopment.meteorclient.gui.tabs.Tab;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
-import net.minecraft.nbt.CompoundTag;
 
 public final class NoxaraClickScreen extends TabScreen {
     private NoxaraDashboard dashboard;
@@ -44,11 +43,8 @@ public final class NoxaraClickScreen extends TabScreen {
 
     @Override
     public boolean fromClipboard() {
-        CompoundTag tag = NbtUtils.fromClipboard();
-        if (tag == null) return false;
-
-        Modules.get().fromTag(tag);
-        invalidate();
-        return true;
+        boolean loaded = NbtUtils.fromClipboard(Modules.get());
+        if (loaded) invalidate();
+        return loaded;
     }
 }

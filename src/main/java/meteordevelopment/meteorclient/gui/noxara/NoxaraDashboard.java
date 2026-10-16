@@ -153,8 +153,8 @@ public final class NoxaraDashboard extends WContainer {
         double glowHeight = height * 0.44;
         renderer.quad(0, 0, glowWidth, glowHeight,
             NoxaraStyle.GLOW,
-            new meteordevelopment.meteorclient.utils.render.color.Color(124, 58, 237, 4),
-            new meteordevelopment.meteorclient.utils.render.color.Color(124, 58, 237, 0),
-            new meteordevelopment.meteorclient.utils.render.color.Color(124, 58, 237, 0));
+            NoxaraStyle.GLOW_EDGE,
+            NoxaraStyle.GLOW_CLEAR,
+            NoxaraStyle.GLOW_CLEAR);
     }
 }

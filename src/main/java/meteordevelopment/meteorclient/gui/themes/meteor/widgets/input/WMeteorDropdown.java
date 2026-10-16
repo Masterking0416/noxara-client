@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.gui.themes.meteor.widgets.input;
 
+import meteordevelopment.meteorclient.gui.noxara.NoxaraStyle;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorGuiTheme;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorWidget;
@@ -32,7 +33,8 @@ public class WMeteorDropdown<T> extends WDropdown<T> implements MeteorWidget {
         double pad = pad();
         double s = theme.textHeight();
 
-        renderBackground(renderer, this, pressed, mouseOver);
+        NoxaraStyle.panel(renderer, x, y, width, height, theme.scale(7),
+            theme.backgroundColor.get(pressed, mouseOver, true), false);
 
         String text = get().toString();
         double w = theme.textWidth(text);
@@ -45,12 +47,7 @@ public class WMeteorDropdown<T> extends WDropdown<T> implements MeteorWidget {
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             MeteorGuiTheme theme = theme();
-            double s = theme.scale(2);
-            Color c = theme.outlineColor.get();
-
-            renderer.quad(x, y + height - s, width, s, c);
-            renderer.quad(x, y, s, height - s, c);
-            renderer.quad(x + width - s, y, s, height - s, c);
+            NoxaraStyle.panel(renderer, x, y, width, height, theme.scale(8), theme.backgroundColor.get(), true);
         }
     }
 
@@ -72,7 +69,7 @@ public class WMeteorDropdown<T> extends WDropdown<T> implements MeteorWidget {
             color.a += color.a / 2;
             color.validate();
 
-            renderer.quad(this, color);
+            NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(5), color);
 
             color.a = preA;
 

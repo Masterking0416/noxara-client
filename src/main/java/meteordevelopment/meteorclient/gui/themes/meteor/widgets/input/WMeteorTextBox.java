@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.gui.themes.meteor.widgets.input;
 
+import meteordevelopment.meteorclient.gui.noxara.NoxaraStyle;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorGuiTheme;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorWidget;
@@ -33,19 +34,12 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
             @Override
             protected void onRender(GuiRenderer renderer1, double mouseX, double mouseY, double delta) {
                 MeteorGuiTheme theme1 = theme();
-                double s = theme1.scale(2);
-                Color c = theme1.outlineColor.get();
-
                 Color col = theme1.backgroundColor.get();
                 int preA = col.a;
-                col.a += col.a / 2;
+                col.a = Math.min(255, col.a + col.a / 2);
                 col.validate();
-                renderer1.quad(this, col);
+                NoxaraStyle.panel(renderer1, x, y, width, height, theme1.scale(8), col, true);
                 col.a = preA;
-
-                renderer1.quad(x, y + height - s, width, s, c);
-                renderer1.quad(x, y, s, height - s, c);
-                renderer1.quad(x + width - s, y, s, height - s, c);
             }
         };
     }
@@ -105,9 +99,12 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
             cursorTimer += delta * 1.75;
         }
 
-        renderBackground(renderer, this, false, false);
-
         MeteorGuiTheme theme = theme();
+        NoxaraStyle.panel(renderer, x, y, width, height, theme.scale(7),
+            theme.backgroundColor.get(focused, mouseOver, true), false);
+        if (focused) {
+            NoxaraStyle.roundedRect(renderer, x, y, width, theme.scale(1), theme.scale(1), NoxaraStyle.LAVENDER);
+        }
         double pad = pad();
         double overflowWidth = getOverflowWidthForRender();
 

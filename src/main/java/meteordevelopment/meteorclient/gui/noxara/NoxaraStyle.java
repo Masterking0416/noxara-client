@@ -29,6 +29,8 @@ public final class NoxaraStyle {
     public static final Color BORDER = new Color(91, 76, 115, 122);
     public static final Color SHADOW = new Color(0, 0, 0, 64);
     public static final Color GLOW = new Color(124, 58, 237, 28);
+    public static final Color GLOW_EDGE = new Color(124, 58, 237, 4);
+    public static final Color GLOW_CLEAR = new Color(124, 58, 237, 0);
 
     public static final Color VIOLET = new Color(124, 58, 237, 255);
     public static final Color LAVENDER = new Color(192, 132, 252, 255);
