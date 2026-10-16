@@ -100,15 +100,39 @@ public class Sprint extends Module {
         .build()
     );
 
+    // Wurst AutoSwim behavior integrated into the existing Meteor Sprint module.
+    private final Setting<Boolean> autoSwim = sgGeneral.add(new BoolSetting.Builder()
+        .name("auto-swim")
+        .description("Automatically sprint forward while swimming or underwater.")
+        .defaultValue(false)
+        .build()
+    );
+
     public Sprint() {
         super(Categories.Movement, "sprint", "Automatically sprints.");
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     private void onTickMovement(TickEvent.Post event) {
-        if (unsprintInWater.get() && mc.player.isInWater()) return;
+        if (shouldAutoSwimSprint()) {
+            mc.player.setSprinting(true);
+            return;
+        }
 
+        if (unsprintInWater.get() && mc.player.isInWater()) return;
         mc.player.setSprinting(shouldSprint());
+    }
+
+    /**
+     * Wurst AutoSwim-inspired behavior: keep forward sprinting while swimming,
+     * without forcing it during collision, sneaking, or flight.
+     */
+    private boolean shouldAutoSwimSprint() {
+        if (!isActive() || !autoSwim.get()) return false;
+        if (mc.player.horizontalCollision || mc.player.isShiftKeyDown()) return false;
+        if (mc.player.getAbilities().flying || !mc.player.isInWater()) return false;
+        if (!mc.player.isSwimming() && !mc.player.isUnderWater()) return false;
+        return mc.player.zza > 0;
     }
 
     @EventHandler(priority = EventPriority.HIGH)

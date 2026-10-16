@@ -48,7 +48,7 @@ This file tracks every registered Wurst7 hack against the Noxara branch's Meteor
 | Auto Soup | AutoSoupHack | Unique-feature candidate — compare behavior and port if compatible |
 | Auto Sprint | AutoSprintHack | Candidate merge with Sprint — verify behavior first |
 | Auto Steal | AutoStealHack | Candidate merge with InventoryTweaks — verify behavior first |
-| Auto Swim | AutoSwimHack | Unique-feature candidate — compare behavior and port if compatible |
+| Auto Swim | AutoSwimHack | Implemented as the optional `auto-swim` setting in Meteor's Sprint module; Java 25 build and in-game validation pending |
 | Auto Switch | AutoSwitchHack | Unique-feature candidate — compare behavior and port if compatible |
 | Auto Sword | AutoSwordHack | Candidate merge with AutoWeapon — verify behavior first |
 | Auto Tool | AutoToolHack | Combine into AutoTool — initial settings committed; validation pending |
