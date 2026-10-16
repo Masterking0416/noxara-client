@@ -7,6 +7,7 @@ package meteordevelopment.meteorclient.gui.noxara;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -161,7 +162,7 @@ public final class NoxaraModuleCard extends NoxaraPanel {
 
     private static final class NoxaraSettingsPanel extends NoxaraPanel {
         private final Module module;
-        private WWidget settingsWidget;
+        private WContainer settingsWidget;
 
         private NoxaraSettingsPanel(Module module) {
             super(NoxaraStyle.PANEL_SOFT, 8, false);
@@ -175,7 +176,7 @@ public final class NoxaraModuleCard extends NoxaraPanel {
             add(theme.label(module.description, Math.max(theme.scale(220), meteordevelopment.meteorclient.utils.Utils.getWindowWidth() * 0.42)))
                 .expandX().padHorizontal(10).padBottom(5);
 
-            settingsWidget = theme.settings(module.settings);
+            settingsWidget = (WContainer) theme.settings(module.settings);
             settingsWidget.minWidth = 0;
             add(settingsWidget).expandX().padHorizontal(8);
 
@@ -184,7 +185,7 @@ public final class NoxaraModuleCard extends NoxaraPanel {
             add(fullSettings).right().pad(9);
         }
 
-        private WWidget settingsWidget() {
+        private WContainer settingsWidget() {
             return settingsWidget;
         }
     }
