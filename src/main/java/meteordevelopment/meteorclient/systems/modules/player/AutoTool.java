@@ -1,6 +1,10 @@
 /*
  * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client).
  * Copyright (c) Meteor Development.
+ *
+ * The optional sword, hand fallback, and repair-mode controls are inspired by
+ * corresponding Wurst7 AutoTool features; this integration retains Meteor's
+ * own module/settings implementation.
  */
 
 package meteordevelopment.meteorclient.systems.modules.player;
@@ -206,7 +210,7 @@ public class AutoTool extends Module {
             fallbackSelected = bestSlot != -1;
         }
 
-        if ((bestSlot != -1 && (fallbackSelected || bestScore > getScore(currentStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), useSwords.get(), itemStack -> !shouldStopUsing(itemStack))) || shouldStopUsing(currentStack) || (!isTool(currentStack) && !(useSwords.get() && currentStack.is(ItemTags.SWORDS))))) {
+        if (bestSlot != -1 && (fallbackSelected || bestScore > getScore(currentStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), useSwords.get(), itemStack -> !shouldStopUsing(itemStack)) || shouldStopUsing(currentStack) || (!isTool(currentStack) && !(useSwords.get() && currentStack.is(ItemTags.SWORDS))))) {
             ticks = switchDelay.get();
 
             if (ticks == 0) InvUtils.swap(bestSlot, true);
