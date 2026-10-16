@@ -36,6 +36,8 @@ import java.util.function.Predicate;
 public class AutoTool extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgWhitelist = settings.createGroup("Whitelist");
+    // Wurst-inspired controls that complement Meteor's enchantment and list settings.
+    private final SettingGroup sgWurst = settings.createGroup("Wurst Options");
 
     // General
 
@@ -116,6 +118,29 @@ public class AutoTool extends Module {
         .build()
     );
 
+    private final Setting<Boolean> useSwords = sgWurst.add(new BoolSetting.Builder()
+        .name("use-swords")
+        .description("Allows swords to be selected for blocks they break faster, such as cobwebs and leaves.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Boolean> useHands = sgWurst.add(new BoolSetting.Builder()
+        .name("use-hands")
+        .description("When no suitable tool is found, prefer an empty hand or a non-damageable hotbar item over a poorly matched damageable tool.")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Integer> repairMode = sgWurst.add(new IntSetting.Builder()
+        .name("repair-mode")
+        .description("Avoids tools with this many or fewer durability uses remaining. 0 disables this extra threshold; Anti-break remains available for percentage-based protection.")
+        .defaultValue(0)
+        .range(0, 100)
+        .sliderRange(0, 100)
+        .build()
+    );
+
     private boolean wasPressed;
     private boolean shouldSwitch;
     private int ticks;
@@ -166,7 +191,7 @@ public class AutoTool extends Module {
             boolean itemInList = (listMode.get() == ListMode.Whitelist ? whitelist.get() : blacklist.get()).contains(itemStack.getItem());
             if (!listMode.get().allows(itemInList)) continue;
 
-            double score = getScore(itemStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), itemStack2 -> !shouldStopUsing(itemStack2));
+            double score = getScore(itemStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), useSwords.get(), itemStack2 -> !shouldStopUsing(itemStack2));
             if (score < 0) continue;
 
             if (score > bestScore) {
@@ -175,7 +200,13 @@ public class AutoTool extends Module {
             }
         }
 
-        if ((bestSlot != -1 && (bestScore > getScore(currentStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), itemStack -> !shouldStopUsing(itemStack))) || shouldStopUsing(currentStack) || !isTool(currentStack))) {
+        boolean fallbackSelected = false;
+        if (bestSlot == -1 && useHands.get() && currentStack.isDamageableItem() && currentStack.getDestroySpeed(blockState) <= 1) {
+            bestSlot = findFallbackSlot();
+            fallbackSelected = bestSlot != -1;
+        }
+
+        if ((bestSlot != -1 && (fallbackSelected || bestScore > getScore(currentStack, blockState, silkTouchForEnderChest.get(), fortuneForOresCrops.get(), prefer.get(), useSwords.get(), itemStack -> !shouldStopUsing(itemStack))) || shouldStopUsing(currentStack) || (!isTool(currentStack) && !(useSwords.get() && currentStack.is(ItemTags.SWORDS))))) {
             ticks = switchDelay.get();
 
             if (ticks == 0) InvUtils.swap(bestSlot, true);
@@ -192,13 +223,28 @@ public class AutoTool extends Module {
     }
 
     private boolean shouldStopUsing(ItemStack itemStack) {
-        return antiBreak.get() && (itemStack.getMaxDamage() - itemStack.getDamageValue()) < (itemStack.getMaxDamage() * breakDurability.get() / 100);
+        if (antiBreak.get() && (itemStack.getMaxDamage() - itemStack.getDamageValue()) < (itemStack.getMaxDamage() * breakDurability.get() / 100)) return true;
+        return repairMode.get() > 0 && itemStack.isDamageableItem() && itemStack.getMaxDamage() - itemStack.getDamageValue() <= repairMode.get();
+    }
+
+    private int findFallbackSlot() {
+        for (int slot = 0; slot < 9; slot++) {
+            if (slot == mc.player.getInventory().getSelectedSlot()) continue;
+            ItemStack stack = mc.player.getInventory().getItem(slot);
+            if (stack.isEmpty() || !stack.isDamageableItem()) return slot;
+        }
+        return -1;
     }
 
     public static double getScore(ItemStack itemStack, BlockState state, boolean silkTouchEnderChest, boolean fortuneOre, EnchantPreference enchantPreference, Predicate<ItemStack> good) {
-        if (!good.test(itemStack) || !isTool(itemStack)) return -1;
+        return getScore(itemStack, state, silkTouchEnderChest, fortuneOre, enchantPreference, false, good);
+    }
+
+    private static double getScore(ItemStack itemStack, BlockState state, boolean silkTouchEnderChest, boolean fortuneOre, EnchantPreference enchantPreference, boolean useSwords, Predicate<ItemStack> good) {
+        if (!good.test(itemStack) || (!isTool(itemStack) && !(useSwords && itemStack.is(ItemTags.SWORDS)))) return -1;
         if (!itemStack.isCorrectToolForDrops(state) &&
             !(itemStack.is(ItemTags.SWORDS) && (state.getBlock() instanceof BambooStalkBlock || state.getBlock() instanceof BambooSaplingBlock)) &&
+            !(useSwords && itemStack.is(ItemTags.SWORDS) && itemStack.getDestroySpeed(state) > 1) &&
             !(itemStack.getItem() instanceof ShearsItem && state.getBlock() instanceof LeavesBlock || state.is(BlockTags.WOOL)))
             return -1;
 
