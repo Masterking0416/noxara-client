@@ -144,6 +144,19 @@ public final class NoxaraDashboard extends WContainer {
         return Math.max(theme.scale(150), windowHeight - theme.scale(60));
     }
 
+    /**
+     * Maximum width for wrapped module descriptions. The width is derived from the
+     * ClickGUI window, not the monitor, so expanded settings cannot inherit a
+     * full-screen width and wrap incorrectly inside the smaller dashboard.
+     */
+    public double settingsDescriptionWidth() {
+        double outerInset = theme.scale(11);
+        double windowContentWidth = Math.max(theme.scale(240), windowWidth - outerInset * 2);
+        double sidebarWidth = Math.min(theme.scale(174), Math.max(theme.scale(136), windowWidth * 0.235));
+        double mainWidth = Math.max(theme.scale(230), windowContentWidth - sidebarWidth - theme.scale(10));
+        return Math.max(theme.scale(180), mainWidth - theme.scale(94));
+    }
+
     public void updateViewport() {
         if (windowInitialized) {
             clampWindowToScreen();
