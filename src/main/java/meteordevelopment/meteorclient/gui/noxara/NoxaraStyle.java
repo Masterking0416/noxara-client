@@ -20,11 +20,11 @@ public final class NoxaraStyle {
     public static final Color BACKDROP_BOTTOM_RIGHT = new Color(10, 11, 17, 226);
     public static final Color BACKDROP_BOTTOM_LEFT = new Color(20, 12, 31, 224);
 
-    public static final Color PANEL = new Color(18, 18, 24, 238);
-    public static final Color PANEL_SOFT = new Color(24, 24, 31, 236);
-    public static final Color CARD = new Color(27, 27, 36, 236);
-    public static final Color CARD_HOVER = new Color(36, 31, 48, 244);
-    public static final Color CARD_ACTIVE = new Color(44, 32, 66, 245);
+    public static final Color PANEL = new Color(18, 18, 24, 218);
+    public static final Color PANEL_SOFT = new Color(24, 24, 31, 226);
+    public static final Color CARD = new Color(27, 27, 36, 228);
+    public static final Color CARD_HOVER = new Color(36, 31, 48, 238);
+    public static final Color CARD_ACTIVE = new Color(44, 32, 66, 242);
     public static final Color NAV_SELECTED = new Color(124, 58, 237, 48);
     public static final Color BORDER = new Color(91, 76, 115, 122);
     public static final Color SHADOW = new Color(0, 0, 0, 64);

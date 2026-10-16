@@ -18,6 +18,7 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.ResolutionChangedEvent;
 import meteordevelopment.meteorclient.events.render.RenderAfterWorldEvent;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
+import meteordevelopment.meteorclient.gui.screens.NoxaraClickScreen;
 import meteordevelopment.meteorclient.renderer.FixedUniformStorage;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
@@ -232,10 +233,14 @@ public class Blur extends Module {
     }
 
     private boolean shouldRender() {
-        if (!isActive()) return false;
         Screen screen = mc.gui.screen();
+        boolean noxaraClickScreen = screen instanceof NoxaraClickScreen;
 
-        if (screen instanceof WidgetScreen) return meteor.get();
+        // The Noxara dashboard requests its glass backdrop even if the optional
+        // Blur module toggle is off. All other screen behavior remains unchanged.
+        if (!isActive() && !noxaraClickScreen) return false;
+
+        if (screen instanceof WidgetScreen) return noxaraClickScreen || meteor.get();
         if (screen instanceof AbstractContainerScreen) return inventories.get();
         if (screen instanceof ChatScreen) return chat.get();
         if (screen != null) return other.get();

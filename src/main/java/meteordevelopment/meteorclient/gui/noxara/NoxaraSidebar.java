@@ -127,7 +127,7 @@ public final class NoxaraSidebar extends NoxaraPanel {
             hoverProgress += (target - hoverProgress) * Math.min(1, delta * 18);
 
             if (hoverProgress > 0.005) {
-                NoxaraStyle.mix(fill, NoxaraStyle.CARD_HOVER, NoxaraStyle.NAV_SELECTED, selected ? 1 : hoverProgress);
+                NoxaraStyle.mix(fill, NoxaraStyle.CARD_HOVER, NoxaraStyle.NAV_SELECTED, hoverProgress);
                 NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(8), fill);
             }
 
