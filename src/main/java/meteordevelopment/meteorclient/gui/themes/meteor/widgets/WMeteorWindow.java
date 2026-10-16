@@ -34,7 +34,10 @@ public class WMeteorWindow extends WWindow implements MeteorWidget {
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            renderer.quad(this, theme().accentColor.get());
+            // Noxara window chrome: graphite surface, violet brand rail, and a quiet divider.
+            renderer.quad(this, theme().backgroundColor.get());
+            renderer.quad(x, y, theme().scale(3), height, theme().accentColor.get());
+            renderer.quad(x, y + height - theme().scale(1), width, theme().scale(1), theme().separatorEdges.get());
         }
     }
 }
