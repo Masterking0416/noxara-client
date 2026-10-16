@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 
 import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT;
 import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 /** Module row with category icon, obvious settings control, and a separate enable switch. */
 public final class NoxaraModuleButton extends WWidget {
@@ -129,16 +128,14 @@ public final class NoxaraModuleButton extends WWidget {
         if (!mouseOver) return false;
 
         if (click.button() == MOUSE_BUTTON_RIGHT) {
-            mc.gui.setScreen(theme.moduleScreen(module));
+            // Keep module settings inline: right-click opens the same slide-down as the row action.
+            card.toggleExpanded();
             return true;
         }
 
         if (click.button() != MOUSE_BUTTON_LEFT) return false;
 
         double switchStart = x + width - theme.scale(48);
-        double switchWidth = theme.scale(34);
-        double settingsWidth = theme.scale(84);
-        double settingsStart = x + width - switchWidth - theme.scale(10) - theme.scale(8) - settingsWidth;
 
         if (click.x() >= switchStart) {
             module.toggle();
