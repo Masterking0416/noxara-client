@@ -96,6 +96,8 @@ public final class NoxaraSidebar extends WContainer {
                 .expandX().padHorizontal(3).padVertical(1);
             add(new NavigationButton(dashboard, NoxaraDashboard.PAGE_FAVORITES, "Favorites", DisplayItemUtils.toStack(Items.NETHER_STAR)))
                 .expandX().padHorizontal(3).padVertical(1);
+            add(new NavigationButton(dashboard, NoxaraDashboard.PAGE_EXPLOITS, "Exploits", DisplayItemUtils.toStack(Items.TNT)))
+                .expandX().padHorizontal(3).padVertical(1);
 
             add(new SectionLabel("CATEGORIES")).padHorizontal(9).padTop(7).padBottom(2);
             addCategory(Categories.Combat);

@@ -27,6 +27,7 @@ public final class NoxaraDashboard extends WContainer {
     public static final String PAGE_ALL = "@all";
     public static final String PAGE_ACTIVE = "@active";
     public static final String PAGE_FAVORITES = "@favorites";
+    public static final String PAGE_EXPLOITS = "@exploits";
 
     private static final int DRAG_NONE = 0;
     private static final int DRAG_WINDOW = 1;
@@ -106,6 +107,7 @@ public final class NoxaraDashboard extends WContainer {
         if (PAGE_ALL.equals(page)) return "All modules";
         if (PAGE_ACTIVE.equals(page)) return "Active modules";
         if (PAGE_FAVORITES.equals(page)) return "Favorites";
+        if (PAGE_EXPLOITS.equals(page)) return "Exploits";
         return page;
     }
 
@@ -113,6 +115,7 @@ public final class NoxaraDashboard extends WContainer {
         if (PAGE_ACTIVE.equals(page)) return "Everything currently enabled in your session";
         if (PAGE_FAVORITES.equals(page)) return "Your pinned tools, ready when you need them";
         if (PAGE_ALL.equals(page)) return "Your client, your modules, one control surface";
+        if (PAGE_EXPLOITS.equals(page)) return "Packet and interaction tools; server checks may limit them";
         return "Configure " + page.toLowerCase(Locale.ROOT) + " modules";
     }
 
@@ -179,7 +182,8 @@ public final class NoxaraDashboard extends WContainer {
         List<Module> result = new ArrayList<>();
 
         Category category = null;
-        if (!PAGE_ALL.equals(page) && !PAGE_ACTIVE.equals(page) && !PAGE_FAVORITES.equals(page)) {
+        if (!PAGE_ALL.equals(page) && !PAGE_ACTIVE.equals(page) && !PAGE_FAVORITES.equals(page)
+            && !PAGE_EXPLOITS.equals(page)) {
             for (Category candidate : Modules.loopCategories()) {
                 if (candidate.name.equals(page)) {
                     category = candidate;
@@ -190,6 +194,7 @@ public final class NoxaraDashboard extends WContainer {
 
         for (Module module : Modules.get().getAll()) {
             if (Config.get().hiddenModules.get().contains(module)) continue;
+            if (PAGE_EXPLOITS.equals(page) && !isExploitModule(module.name)) continue;
             if (category != null && !module.category.equals(category)) continue;
             if (PAGE_ACTIVE.equals(page) && !module.isActive()) continue;
             if (PAGE_FAVORITES.equals(page) && !module.favorite) continue;
@@ -199,6 +204,21 @@ public final class NoxaraDashboard extends WContainer {
 
         result.sort(Comparator.comparing(module -> module.title, String.CASE_INSENSITIVE_ORDER));
         return result;
+    }
+
+    /**
+     * Existing Meteor modules that use packets or relaxed client-side interaction
+     * checks. This is a curated shortcut page, not a promise that a remote server
+     * will accept every action.
+     */
+    private static boolean isExploitModule(String name) {
+        return switch (name) {
+            case "anti-hunger", "fast-use", "ghost-hand", "reach", "liquid-interact",
+                "no-mining-trace", "instant-rebreak", "no-fall", "no-slow",
+                "packet-mine", "blink", "packet-canceller", "server-spoof",
+                "anti-packet-kick" -> true;
+            default -> false;
+        };
     }
 
     private boolean matchesQuery(Module module, String filter) {
