@@ -96,7 +96,7 @@ public class MeteorGuiTheme extends GuiTheme {
     // Colors
 
     public final Setting<SettingColor> accentColor = color("accent", "Main color of the GUI.", new SettingColor(137, 107, 255));
-    public final Setting<SettingColor> checkboxColor = color("checkbox", "Color of checkbox.", new SettingColor(145, 61, 226));
+    public final Setting<SettingColor> checkboxColor = color("checkbox", "Color of checkbox.", new SettingColor(137, 107, 255));
     public final Setting<SettingColor> plusColor = color("plus", "Color of plus button.", new SettingColor(88, 220, 180));
     public final Setting<SettingColor> minusColor = color("minus", "Color of minus button.", new SettingColor(255, 104, 135));
     public final Setting<SettingColor> favoriteColor = color("favorite", "Color of checked favorite button.", new SettingColor(255, 201, 120));
@@ -134,8 +134,8 @@ public class MeteorGuiTheme extends GuiTheme {
 
     // Separator
 
-    public final Setting<SettingColor> separatorText = color(sgSeparator, "separator-text", "Color of separator text", new SettingColor(255, 255, 255));
-    public final Setting<SettingColor> separatorCenter = color(sgSeparator, "separator-center", "Center color of separators.", new SettingColor(255, 255, 255));
+    public final Setting<SettingColor> separatorText = color(sgSeparator, "separator-text", "Color of separator text", new SettingColor(228, 230, 245));
+    public final Setting<SettingColor> separatorCenter = color(sgSeparator, "separator-center", "Center color of separators.", new SettingColor(137, 107, 255, 180));
     public final Setting<SettingColor> separatorEdges = color(sgSeparator, "separator-edges", "Color of separator edges.", new SettingColor(111, 104, 146, 145));
 
     // Scrollbar
