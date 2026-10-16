@@ -130,6 +130,11 @@ public abstract class MinecraftMixin implements IMinecraft {
         Profiler.get().push(MeteorClient.MOD_ID + "_post_update");
         MeteorClient.EVENT_BUS.post(TickEvent.Post.get());
         Profiler.get().pop();
+
+        FastUse fastUse = Modules.get().get(FastUse.class);
+        if (fastUse != null && fastUse.isActive() && fastUse.shouldResetRightClickDelay()) {
+            rightClickDelay = 0;
+        }
     }
 
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
