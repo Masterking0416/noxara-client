@@ -11,53 +11,51 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT;
 import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
-/**
- * Module card header. Left-click the pill to toggle; left-click the card body to
- * expand settings; right-click anywhere to open the full settings/keybind view.
- */
+/** Module row with category icon, obvious settings control, and a separate enable switch. */
 public final class NoxaraModuleButton extends WWidget {
     private final NoxaraModuleCard card;
     private final NoxaraDashboard dashboard;
     private final Module module;
+    private final ItemStack categoryIcon;
 
     private double hoverProgress;
     private double toggleProgress;
     private String displayedTitle = "";
     private final Color surfaceColor = new Color(0, 0, 0, 255);
     private final Color toggleColor = new Color(0, 0, 0, 255);
+    private final Color settingsFill = new Color(0, 0, 0, 255);
 
     public NoxaraModuleButton(NoxaraModuleCard card, NoxaraDashboard dashboard, Module module) {
         this.card = card;
         this.dashboard = dashboard;
         this.module = module;
+        this.categoryIcon = module.category.icon.get();
         toggleProgress = module.isActive() ? 1 : 0;
         tooltip = module.description;
     }
 
     @Override
     protected void onCalculateSize() {
-        // Compact single-line rows reduce visual noise and give the module list
-        // more breathing room. Full descriptions remain available as hover tooltips.
         width = theme.scale(300);
         height = theme.scale(42);
     }
 
     @Override
     protected void onCalculateWidgetPositions() {
-        double reserved = theme.scale(98);
-        displayedTitle = NoxaraStyle.clipText(module.title, width - theme.scale(26) - reserved, theme);
+        // Reserve room for the category icon, labeled settings dropdown, and toggle.
+        displayedTitle = NoxaraStyle.clipText(module.title, width - theme.scale(190), theme);
     }
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         boolean active = module.isActive();
-        double targetHover = mouseOver ? 1 : 0;
-        hoverProgress += (targetHover - hoverProgress) * Math.min(1, delta * 16);
+        hoverProgress += ((mouseOver ? 1 : 0) - hoverProgress) * Math.min(1, delta * 16);
         toggleProgress += ((active ? 1 : 0) - toggleProgress) * Math.min(1, delta * 18);
         hoverProgress = Mth.clamp(hoverProgress, 0, 1);
         toggleProgress = Mth.clamp(toggleProgress, 0, 1);
@@ -68,21 +66,37 @@ public final class NoxaraModuleButton extends WWidget {
             NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(6), surfaceColor);
         }
 
-        renderer.text(displayedTitle, x + theme.scale(12),
+        if (categoryIcon != null && !categoryIcon.isEmpty()) {
+            double iconSize = theme.scale(18);
+            renderer.item(categoryIcon, (int) (x + theme.scale(10)),
+                (int) (y + (height - iconSize) / 2), 1, false);
+        }
+
+        renderer.text(displayedTitle, x + theme.scale(34),
             y + (height - theme.textHeight()) / 2,
             active ? NoxaraStyle.LAVENDER : NoxaraStyle.TEXT, false);
-
-        // Expander is placed just left of the switch.
-        double arrowSize = theme.scale(9);
-        double arrowX = x + width - theme.scale(61);
-        double arrowY = y + (height - arrowSize) / 2;
-        renderer.rotatedQuad(arrowX, arrowY, arrowSize, arrowSize,
-            card.isExpanded() ? 0 : -90, GuiRenderer.TRIANGLE, NoxaraStyle.SUBTLE);
 
         double switchWidth = theme.scale(34);
         double switchHeight = theme.scale(18);
         double switchX = x + width - switchWidth - theme.scale(10);
         double switchY = y + (height - switchHeight) / 2;
+
+        double settingsWidth = theme.scale(84);
+        double settingsHeight = theme.scale(25);
+        double settingsX = switchX - theme.scale(8) - settingsWidth;
+        double settingsY = y + (height - settingsHeight) / 2;
+        boolean settingsHovered = mouseX >= settingsX && mouseX <= settingsX + settingsWidth
+            && mouseY >= settingsY && mouseY <= settingsY + settingsHeight;
+        NoxaraStyle.mix(settingsFill, NoxaraStyle.CARD, NoxaraStyle.CARD_ACTIVE,
+            card.isExpanded() ? 1 : settingsHovered ? 0.9 : 0.55);
+        NoxaraStyle.roundedRect(renderer, settingsX, settingsY, settingsWidth, settingsHeight,
+            theme.scale(6), settingsFill);
+
+        drawSettingsIcon(renderer, settingsX + theme.scale(8), settingsY + theme.scale(7),
+            theme.scale(10), card.isExpanded() || settingsHovered ? NoxaraStyle.LAVENDER : NoxaraStyle.MUTED);
+        renderer.text("Settings", settingsX + theme.scale(23),
+            settingsY + (settingsHeight - theme.textHeight()) / 2,
+            card.isExpanded() || settingsHovered ? NoxaraStyle.TEXT : NoxaraStyle.MUTED, false);
 
         if (toggleProgress > 0.05) {
             NoxaraStyle.roundedRect(renderer, switchX - theme.scale(2), switchY - theme.scale(2),
@@ -98,6 +112,18 @@ public final class NoxaraModuleButton extends WWidget {
         renderer.quad(knobX, switchY + theme.scale(2), knobSize, knobSize, GuiRenderer.CIRCLE, NoxaraStyle.SWITCH_KNOB);
     }
 
+    private void drawSettingsIcon(GuiRenderer renderer, double x, double y, double size, Color color) {
+        double cx = x + size / 2;
+        double cy = y + size / 2;
+        double thick = Math.max(1, theme.scale(1.5));
+        NoxaraStyle.roundedRect(renderer, cx - thick / 2, y, thick, size, thick / 2, color);
+        NoxaraStyle.roundedRect(renderer, x, cy - thick / 2, size, thick, thick / 2, color);
+        NoxaraStyle.roundedRect(renderer, x + size * 0.18, y + size * 0.18,
+            size * 0.64, size * 0.64, size * 0.2, color);
+        renderer.quad(cx - size * 0.13, cy - size * 0.13, size * 0.26, size * 0.26,
+            GuiRenderer.CIRCLE, NoxaraStyle.CARD);
+    }
+
     @Override
     public boolean onMouseClicked(MouseButtonEvent click, boolean doubled) {
         if (!mouseOver) return false;
@@ -109,10 +135,16 @@ public final class NoxaraModuleButton extends WWidget {
 
         if (click.button() != MOUSE_BUTTON_LEFT) return false;
 
-        if (click.x() >= x + width - theme.scale(48)) {
+        double switchStart = x + width - theme.scale(48);
+        double switchWidth = theme.scale(34);
+        double settingsWidth = theme.scale(84);
+        double settingsStart = x + width - switchWidth - theme.scale(10) - theme.scale(8) - settingsWidth;
+
+        if (click.x() >= switchStart) {
             module.toggle();
             dashboard.invalidate();
         } else {
+            // Clicking the labeled Settings pill or the rest of the row toggles the dropdown.
             card.toggleExpanded();
         }
         return true;

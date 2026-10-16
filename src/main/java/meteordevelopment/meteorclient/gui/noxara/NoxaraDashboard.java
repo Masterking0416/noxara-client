@@ -394,7 +394,7 @@ public final class NoxaraDashboard extends WContainer {
             NoxaraStyle.NEBULA_CLEAR, NoxaraStyle.NEBULA_RIGHT,
             NoxaraStyle.NEBULA_RIGHT_CLEAR, NoxaraStyle.NEBULA_CLEAR);
 
-        renderSnow(renderer, delta);
+        // Keep the top edge clean: no drifting particles are drawn over the GUI.
 
         NoxaraStyle.panel(renderer, windowX, windowY, windowWidth, windowHeight,
             theme.scale(WINDOW_RADIUS), NoxaraStyle.SHELL, true);

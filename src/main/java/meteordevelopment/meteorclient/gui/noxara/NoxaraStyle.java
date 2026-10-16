@@ -15,10 +15,10 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
  * small number of batched quads and the client's antialiased circle texture.
  */
 public final class NoxaraStyle {
-    public static final Color BACKDROP_TOP_LEFT = new Color(12, 8, 23, 192);
-    public static final Color BACKDROP_TOP_RIGHT = new Color(10, 13, 23, 194);
-    public static final Color BACKDROP_BOTTOM_RIGHT = new Color(7, 8, 15, 204);
-    public static final Color BACKDROP_BOTTOM_LEFT = new Color(21, 9, 35, 198);
+    public static final Color BACKDROP_TOP_LEFT = new Color(12, 8, 23, 255);
+    public static final Color BACKDROP_TOP_RIGHT = new Color(10, 13, 23, 255);
+    public static final Color BACKDROP_BOTTOM_RIGHT = new Color(7, 8, 15, 255);
+    public static final Color BACKDROP_BOTTOM_LEFT = new Color(21, 9, 35, 255);
     public static final Color NEBULA_LEFT = new Color(124, 58, 237, 34);
     public static final Color NEBULA_LOWER = new Color(124, 58, 237, 8);
     public static final Color NEBULA_CLEAR = new Color(124, 58, 237, 0);
