@@ -52,8 +52,10 @@ public final class NoxaraMainPanel extends NoxaraPanel {
     public void updateViewport() {
         if (moduleView == null) return;
 
-        // Keep the content list inside the resizable window instead of using the full display height.
-        double nextHeight = Math.max(theme.scale(110), dashboard.contentHeight() - theme.scale(190));
+        // The list receives the space left after the heading, search box, hint, padding,
+        // and gaps. Derive this from the panel's actual allocated height so resizing does
+        // not leave a large dead strip at the bottom or compress the list unnecessarily.
+        double nextHeight = Math.max(theme.scale(110), height - theme.scale(156));
         if (Math.abs(nextHeight - lastViewportHeight) > 0.5) {
             lastViewportHeight = nextHeight;
             moduleView.maxHeight = nextHeight;
