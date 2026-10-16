@@ -40,7 +40,7 @@ public final class NoxaraModuleCard extends NoxaraPanel {
     public void toggleExpanded() {
         expanded = !expanded;
         if (expanded) {
-            settingsPanel = new NoxaraSettingsPanel(module);
+            settingsPanel = new NoxaraSettingsPanel(module, dashboard);
             add(settingsPanel).expandX().pad(8);
         } else if (settingsPanel != null) {
             for (var cell : cells) {
@@ -62,18 +62,20 @@ public final class NoxaraModuleCard extends NoxaraPanel {
 
     private static final class NoxaraSettingsPanel extends NoxaraPanel {
         private final Module module;
+        private final NoxaraDashboard dashboard;
         private WContainer settingsWidget;
 
-        private NoxaraSettingsPanel(Module module) {
+        private NoxaraSettingsPanel(Module module, NoxaraDashboard dashboard) {
             super(NoxaraStyle.PANEL_SOFT, 8, false);
             this.module = module;
+            this.dashboard = dashboard;
             spacing = 6;
         }
 
         @Override
         public void init() {
             add(theme.label("SETTINGS", true)).padHorizontal(10).padTop(8).padBottom(1);
-            add(theme.label(module.description, Math.max(theme.scale(220), meteordevelopment.meteorclient.utils.Utils.getWindowWidth() * 0.42)))
+            add(theme.label(module.description, dashboard.settingsDescriptionWidth()))
                 .expandX().padHorizontal(10).padBottom(5);
 
             settingsWidget = (WContainer) theme.settings(module.settings);
