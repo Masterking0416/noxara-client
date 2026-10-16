@@ -296,7 +296,7 @@ public final class NoxaraDashboard extends WContainer {
     }
 
     @Override
-    protected void onMouseMoved(double mouseX, double mouseY, double lastMouseX, double lastMouseY) {
+    public void onMouseMoved(double mouseX, double mouseY, double lastMouseX, double lastMouseY) {
         if (dragMode == DRAG_WINDOW) {
             windowX = mouseX - dragOffsetX;
             windowY = mouseY - dragOffsetY;
