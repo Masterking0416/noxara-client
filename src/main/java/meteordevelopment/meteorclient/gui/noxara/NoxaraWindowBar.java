@@ -73,9 +73,6 @@ public final class NoxaraWindowBar extends WWidget {
             iconY + theme.scale(4), NoxaraStyle.TEXT, true);
 
         renderer.text("NOXARA", iconX + iconSize + theme.scale(9), y + theme.scale(5), NoxaraStyle.TEXT, true);
-        renderer.text("CONTROL CENTER", iconX + iconSize + theme.scale(10),
-            y + theme.scale(22), NoxaraStyle.MUTED, false);
-
         drawNavigation(renderer, mouseX, mouseY);
 
         double statusWidth = theme.scale(92);
@@ -245,8 +242,8 @@ public final class NoxaraWindowBar extends WWidget {
     }
 
     private double navigationStart() {
-        // Leave a dedicated identity zone for the Noxara logo and name.
-        return x + theme.scale(142);
+        // Keep a small identity label, but give the tab icons more room to avoid crowding.
+        return x + theme.scale(105);
     }
 
     private double navigationWidth() {

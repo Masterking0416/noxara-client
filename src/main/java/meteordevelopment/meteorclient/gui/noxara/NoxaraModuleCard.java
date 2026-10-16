@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import net.minecraft.client.input.MouseButtonEvent;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -115,24 +116,53 @@ public final class NoxaraModuleCard extends NoxaraPanel {
 
         @Override
         protected void onCalculateSize() {
-            // Calculate natural content size first, then reveal only the visible fraction.
+            // First calculate the full, natural layout. Only the panel's outer height
+            // is animated; child controls must keep their normal vertical positions.
             super.onCalculateSize();
             naturalHeight = height;
-            height = Math.round(naturalHeight * revealProgress);
+            height = visibleHeight();
+        }
+
+        @Override
+        public void calculateWidgetPositions() {
+            // WVerticalList positions its children using the container height.
+            // Temporarily restore the full height while placing them, then reinstate
+            // the clipped visible height used by the parent list and renderer.
+            double visibleHeight = height;
+            if (naturalHeight > 0) height = naturalHeight;
+            super.calculateWidgetPositions();
+            height = visibleHeight;
         }
 
         @Override
         public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             if (!visible) return true;
-            if (height <= 0.5) return false;
 
-            // Clip child widgets to the animated height so settings never draw over later cards.
-            renderer.scissorStart(x, y, width, height);
+            double clipHeight = visibleHeight();
+            if (clipHeight <= 0.5) return false;
+
+            // Keep child positions stable and clip their drawing to the revealed part.
+            boolean mouseInsideReveal = mouseX >= x && mouseX <= x + width
+                && mouseY >= y && mouseY <= y + clipHeight;
+            renderer.scissorStart(x, y, width, clipHeight);
             try {
-                return super.render(renderer, mouseX, mouseY, delta);
+                return super.render(renderer,
+                    mouseInsideReveal ? mouseX : -100000,
+                    mouseInsideReveal ? mouseY : -100000, delta);
             } finally {
                 renderer.scissorEnd();
             }
+        }
+
+        @Override
+        public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+            if (click.x() < x || click.x() > x + width
+                || click.y() < y || click.y() > y + visibleHeight()) return false;
+            return super.mouseClicked(click, doubled);
+        }
+
+        private double visibleHeight() {
+            return Math.max(0, naturalHeight * Math.max(0, Math.min(1, revealProgress)));
         }
 
         private boolean animateReveal(boolean open, double delta) {
