@@ -103,16 +103,27 @@ public final class NoxaraDashboard extends WContainer {
             if (PAGE_ACTIVE.equals(page) && !module.isActive()) continue;
             if (PAGE_FAVORITES.equals(page) && !module.favorite) continue;
 
-            if (!filter.isEmpty()
-                && !module.title.toLowerCase(Locale.ROOT).contains(filter)
-                && !module.name.toLowerCase(Locale.ROOT).contains(filter)
-                && !module.description.toLowerCase(Locale.ROOT).contains(filter)) continue;
+            if (!filter.isEmpty() && !matchesQuery(module, filter)) continue;
 
             result.add(module);
         }
 
         result.sort(Comparator.comparing(module -> module.title, String.CASE_INSENSITIVE_ORDER));
         return result;
+    }
+
+    private boolean matchesQuery(Module module, String filter) {
+        if (module.title.toLowerCase(Locale.ROOT).contains(filter)
+            || module.name.toLowerCase(Locale.ROOT).contains(filter)
+            || module.description.toLowerCase(Locale.ROOT).contains(filter)) return true;
+
+        // Setting labels are included, so queries such as "range", "delay", or "rotate" work too.
+        for (var group : module.settings) {
+            for (var setting : group) {
+                if (setting.title.toLowerCase(Locale.ROOT).contains(filter)) return true;
+            }
+        }
+        return false;
     }
 
     @Override
