@@ -282,6 +282,8 @@ public final class NoxaraDashboard extends WContainer {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+        if (windowBar != null && windowBar.handleTabClick(click)) return true;
+
         if (click.button() == MOUSE_BUTTON_LEFT && inResizeCorner(click.x(), click.y())) {
             dragMode = DRAG_RESIZE;
             resizeStartMouseX = click.x();
