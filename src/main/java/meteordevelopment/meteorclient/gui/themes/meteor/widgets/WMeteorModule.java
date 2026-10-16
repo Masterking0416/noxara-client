@@ -22,10 +22,8 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
     private final String title;
 
     private double titleWidth;
-
-    private double animationProgress1;
-
-    private double animationProgress2;
+    private double hoverProgress;
+    private double activeProgress;
 
     public WMeteorModule(Module module, String title) {
         this.module = module;
@@ -33,26 +31,23 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
         this.tooltip = module.description;
 
         if (module.isActive()) {
-            animationProgress1 = 1;
-            animationProgress2 = 1;
-        } else {
-            animationProgress1 = 0;
-            animationProgress2 = 0;
+            hoverProgress = 1;
+            activeProgress = 1;
         }
     }
 
     @Override
     public double pad() {
-        return theme.scale(4);
+        return theme.scale(5);
     }
 
     @Override
     protected void onCalculateSize() {
         double pad = pad();
-
         if (titleWidth == 0) titleWidth = theme.textWidth(title);
 
-        width = pad + titleWidth + pad;
+        // Reserve a little space for the active-state marker on the right.
+        width = pad + titleWidth + pad + theme.scale(5);
         height = pad + theme.textHeight() + pad;
     }
 
@@ -65,30 +60,41 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         MeteorGuiTheme theme = theme();
-        double pad = pad();
 
-        animationProgress1 += delta * 4 * ((module.isActive() || mouseOver) ? 1 : -1);
-        animationProgress1 = Mth.clamp(animationProgress1, 0, 1);
+        hoverProgress += delta * 5 * ((module.isActive() || mouseOver) ? 1 : -1);
+        hoverProgress = Mth.clamp(hoverProgress, 0, 1);
 
-        animationProgress2 += delta * 6 * (module.isActive() ? 1 : -1);
-        animationProgress2 = Mth.clamp(animationProgress2, 0, 1);
+        activeProgress += delta * 7 * (module.isActive() ? 1 : -1);
+        activeProgress = Mth.clamp(activeProgress, 0, 1);
 
-        if (animationProgress1 > 0) {
-            renderer.quad(x, y, width * animationProgress1, height, theme.moduleBackground.get());
+        if (hoverProgress > 0) {
+            var fill = module.isActive()
+                ? theme.moduleBackground.get()
+                : theme.backgroundColor.get(false, true, false);
+            renderer.quad(x, y, width * hoverProgress, height, fill);
         }
-        if (animationProgress2 > 0) {
-            renderer.quad(x, y + height * (1 - animationProgress2), theme.scale(2), height * animationProgress2, theme.accentColor.get());
+
+        if (activeProgress > 0) {
+            renderer.quad(x, y + height * (1 - activeProgress), theme.scale(2), height * activeProgress, theme.accentColor.get());
         }
 
-        double x = this.x + pad;
-        double w = width - pad * 2;
+        // A fine divider separates rows without adding heavy panel borders.
+        renderer.quad(x, y + height - theme.scale(0.5), width, theme.scale(0.5), theme.separatorEdges.get());
+
+        double textX = this.x + pad();
+        double availableWidth = width - pad() * 2 - theme.scale(4);
 
         if (theme.moduleAlignment.get() == AlignmentX.Center) {
-            x += w / 2 - titleWidth / 2;
+            textX += availableWidth / 2 - titleWidth / 2;
         } else if (theme.moduleAlignment.get() == AlignmentX.Right) {
-            x += w - titleWidth;
+            textX += availableWidth - titleWidth;
         }
 
-        renderer.text(title, x, y + pad, theme.textColor.get(), false);
+        renderer.text(title, textX, y + pad(), module.isActive() ? theme.accentColor.get() : theme.textColor.get(), false);
+
+        if (module.isActive()) {
+            double dot = theme.scale(3);
+            renderer.quad(this.x + width - pad() - dot, this.y + (height - dot) / 2, dot, dot, theme.accentColor.get());
+        }
     }
 }

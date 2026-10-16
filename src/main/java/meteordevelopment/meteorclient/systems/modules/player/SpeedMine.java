@@ -5,6 +5,7 @@
 
 package meteordevelopment.meteorclient.systems.modules.player;
 
+import meteordevelopment.meteorclient.events.entity.player.BlockBreakingCooldownEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.mixin.MultiPlayerGameModeAccessor;
@@ -13,6 +14,7 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.ListMode;
+import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -20,11 +22,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
+import java.util.Random;
 
 import static net.minecraft.world.effect.MobEffects.HASTE;
 
 public class SpeedMine extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgWurstFastBreak = settings.createGroup("Wurst FastBreak");
 
     public final Setting<Mode> mode = sgGeneral.add(new EnumSetting.Builder<Mode>()
         .name("mode")
@@ -84,13 +88,58 @@ public class SpeedMine extends Module {
         .build()
     );
 
+    private final Setting<Boolean> fastBreak = sgWurstFastBreak.add(new BoolSetting.Builder()
+        .name("fast-break")
+        .description("Uses Wurst-style early STOP_DESTROY_BLOCK packets while mining. Server anti-cheat may reject this.")
+        .defaultValue(false)
+        .visible(() -> mode.get() == Mode.Damage)
+        .build()
+    );
+
+    private final Setting<Double> activationChance = sgWurstFastBreak.add(new DoubleSetting.Builder()
+        .name("activation-chance")
+        .description("Chance that FastBreak sends an early block-finish packet.")
+        .defaultValue(100)
+        .min(0)
+        .max(100)
+        .sliderMax(100)
+        .visible(() -> mode.get() == Mode.Damage && fastBreak.get() && !legitMode.get())
+        .build()
+    );
+
+    private final Setting<Boolean> legitMode = sgWurstFastBreak.add(new BoolSetting.Builder()
+        .name("legit-mode")
+        .description("Only removes the block-break cooldown; disables early finish packets.")
+        .defaultValue(false)
+        .visible(() -> mode.get() == Mode.Damage && fastBreak.get())
+        .build()
+    );
+
+    private final Random fastBreakRandom = new Random();
+    private BlockPos fastBreakTarget;
+    private boolean fastBreakTargetSelected;
+    private boolean fastBreakChosen;
+    private boolean fastBreakPacketSent;
+
     public SpeedMine() {
         super(Categories.Player, "speed-mine", "Allows you to quickly mine blocks.");
     }
 
     @Override
+    public void onActivate() {
+        fastBreakTarget = null;
+        fastBreakTargetSelected = false;
+        fastBreakChosen = false;
+        fastBreakPacketSent = false;
+    }
+
+    @Override
     public void onDeactivate() {
         removeHaste();
+        fastBreakTarget = null;
+        fastBreakTargetSelected = false;
+        fastBreakChosen = false;
+        fastBreakPacketSent = false;
     }
 
     @EventHandler
@@ -108,10 +157,40 @@ public class SpeedMine extends Module {
             float progress = im.meteor$getBreakingProgress();
             BlockPos pos = im.meteor$getCurrentBreakingBlockPos();
 
-            if (pos == null || progress <= 0) return;
-            if (progress + mc.level.getBlockState(pos).getDestroyProgress(mc.player, mc.level, pos) >= 0.7f)
+            if (pos == null || progress <= 0) {
+                fastBreakTarget = null;
+                fastBreakTargetSelected = false;
+                fastBreakPacketSent = false;
+                return;
+            }
+
+            if (fastBreak.get() && !legitMode.get()) {
+                if (!pos.equals(fastBreakTarget)) {
+                    fastBreakTarget = pos.immutable();
+                    fastBreakTargetSelected = true;
+                    fastBreakChosen = fastBreakRandom.nextDouble() * 100 < activationChance.get();
+                    fastBreakPacketSent = false;
+                }
+
+                if (fastBreakTargetSelected && fastBreakChosen && !fastBreakPacketSent) {
+                    mc.gameMode.startPrediction(mc.level, sequence -> new ServerboundPlayerActionPacket(
+                        ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK,
+                        pos,
+                        BlockUtils.getDirection(pos),
+                        sequence
+                    ));
+                    fastBreakPacketSent = true;
+                }
+            }
+
+            if (instamine.get() && progress + mc.level.getBlockState(pos).getDestroyProgress(mc.player, mc.level, pos) >= 0.7f)
                 im.meteor$setDestroyProgress(1f);
         }
+    }
+
+    @EventHandler
+    private void onBlockBreakingCooldown(BlockBreakingCooldownEvent event) {
+        if (mode.get() == Mode.Damage && fastBreak.get() && legitMode.get()) event.cooldown = 0;
     }
 
     @EventHandler

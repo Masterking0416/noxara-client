@@ -23,7 +23,13 @@ public class WMeteorWindow extends WWindow implements MeteorWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (expanded || animProgress > 0) {
+            double stroke = theme().scale(1);
             renderer.quad(x, y + header.height, width, height - header.height, theme().backgroundColor.get());
+
+            // Subtle graphite outline makes floating category panels easier to distinguish.
+            renderer.quad(x, y + header.height, stroke, height - header.height, theme().separatorEdges.get());
+            renderer.quad(x + width - stroke, y + header.height, stroke, height - header.height, theme().separatorEdges.get());
+            renderer.quad(x, y + height - stroke, width, stroke, theme().separatorEdges.get());
         }
     }
 
@@ -34,9 +40,9 @@ public class WMeteorWindow extends WWindow implements MeteorWidget {
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            // Noxara window chrome: graphite surface, violet brand rail, and a quiet divider.
             renderer.quad(this, theme().backgroundColor.get());
             renderer.quad(x, y, theme().scale(3), height, theme().accentColor.get());
+            renderer.quad(x, y, width, theme().scale(1), theme().separatorEdges.get());
             renderer.quad(x, y + height - theme().scale(1), width, theme().scale(1), theme().separatorEdges.get());
         }
     }

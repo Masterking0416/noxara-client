@@ -78,7 +78,7 @@ This file tracks every registered Wurst7 hack against the Noxara branch's Meteor
 | Excavator | ExcavatorHack | Potential overlap with Excavator — verify behavior and combine settings |
 | Extra Elytra | ExtraElytraHack | Candidate merge with ElytraFly — verify behavior first |
 | Fancy Chat | FancyChatHack | Unique-feature candidate — compare behavior and port if compatible |
-| Fast Break | FastBreakHack | Unique-feature candidate — compare behavior and port if compatible |
+| Fast Break | FastBreakHack | Merged into SpeedMine's Wurst FastBreak settings: activation chance, early finish packet, and legit cooldown mode; requires in-game verification |
 | Fast Ladder | FastLadderHack | Candidate merge with FastClimb — verify behavior first |
 | Fast Place | FastPlaceHack | Combine into FastUse — initial settings committed; validation pending |
 | Feed Aura | FeedAuraHack | Unique-feature candidate — compare behavior and port if compatible |
@@ -155,7 +155,7 @@ This file tracks every registered Wurst7 hack against the Noxara branch's Meteor
 | Sneak | SneakHack | Potential overlap with Sneak — verify behavior and combine settings |
 | Snow Shoe | SnowShoeHack | Unique-feature candidate — compare behavior and port if compatible |
 | Speed Hack | SpeedHackHack | Unique-feature candidate — compare behavior and port if compatible |
-| Speed Nuker | SpeedNukerHack | Candidate merge with Nuker — verify behavior first |
+| Speed Nuker | SpeedNukerHack | Added as native SpeedNuker module using Meteor's block filtering/rendering flow, with 5-block default range and packet-mining defaults; requires in-game/server testing |
 | Spider | SpiderHack | Potential overlap with Spider — verify behavior and combine settings |
 | Step | StepHack | Potential overlap with Step — verify behavior and combine settings |
 | Template Tool | TemplateToolHack | Unique-feature candidate — compare behavior and port if compatible |
