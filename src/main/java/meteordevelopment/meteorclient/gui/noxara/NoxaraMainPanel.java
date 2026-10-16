@@ -13,14 +13,13 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 
 import java.util.List;
 
-import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
-import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
 public final class NoxaraMainPanel extends NoxaraPanel {
     private final NoxaraDashboard dashboard;
     private NoxaraContentHeading heading;
     private WTextBox searchBox;
     private WView moduleView;
+    private double lastViewportHeight = -1;
 
     public NoxaraMainPanel(NoxaraDashboard dashboard) {
         super(NoxaraStyle.PANEL, 12, true);
@@ -51,8 +50,13 @@ public final class NoxaraMainPanel extends NoxaraPanel {
     }
 
     public void updateViewport() {
-        if (moduleView != null) {
-            moduleView.maxHeight = Math.max(theme.scale(150), getWindowHeight() - theme.scale(228));
+        if (moduleView == null) return;
+
+        // Keep the content list inside the resizable window instead of using the full display height.
+        double nextHeight = Math.max(theme.scale(110), dashboard.contentHeight() - theme.scale(190));
+        if (Math.abs(nextHeight - lastViewportHeight) > 0.5) {
+            lastViewportHeight = nextHeight;
+            moduleView.maxHeight = nextHeight;
             moduleView.invalidate();
         }
     }

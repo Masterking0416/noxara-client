@@ -7,6 +7,7 @@ package meteordevelopment.meteorclient.gui.noxara;
 
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.utils.render.DisplayItemUtils;
@@ -17,30 +18,32 @@ import net.minecraft.world.item.Items;
 
 import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT;
 
-public final class NoxaraSidebar extends NoxaraPanel {
+/** Category navigation column. It becomes a smooth clipped scroller on short screens. */
+public final class NoxaraSidebar extends WView {
     private final NoxaraDashboard dashboard;
 
     public NoxaraSidebar(NoxaraDashboard dashboard) {
-        super(NoxaraStyle.PANEL, 12, true);
         this.dashboard = dashboard;
         spacing = 4;
+        hasScrollBar = false;
+        scrollOnlyWhenMouseOver = true;
     }
 
     @Override
     public void init() {
-        add(new BrandHeader()).expandX().pad(12);
-        add(new SectionLabel("WORKSPACE")).padHorizontal(14).padTop(2).padBottom(3);
+        super.init();
+        add(new BrandHeader()).expandX().pad(9);
+        add(new SectionLabel("WORKSPACE")).padHorizontal(12).padTop(1).padBottom(2);
 
         add(new NavigationButton(dashboard, NoxaraDashboard.PAGE_ALL, "All modules", DisplayItemUtils.toStack(Items.COMPASS)))
-            .expandX().padHorizontal(8).padVertical(1);
+            .expandX().padHorizontal(6).padVertical(1);
         add(new NavigationButton(dashboard, NoxaraDashboard.PAGE_ACTIVE, "Active", DisplayItemUtils.toStack(Items.REDSTONE)))
-            .expandX().padHorizontal(8).padVertical(1);
+            .expandX().padHorizontal(6).padVertical(1);
         add(new NavigationButton(dashboard, NoxaraDashboard.PAGE_FAVORITES, "Favorites", DisplayItemUtils.toStack(Items.NETHER_STAR)))
-            .expandX().padHorizontal(8).padVertical(1);
+            .expandX().padHorizontal(6).padVertical(1);
 
-        add(new SectionLabel("CATEGORIES")).padHorizontal(14).padTop(11).padBottom(3);
+        add(new SectionLabel("CATEGORIES")).padHorizontal(12).padTop(7).padBottom(2);
 
-        // Noxara's primary browsing order is deliberately stable and predictable.
         addCategory(Categories.Combat);
         addCategory(Categories.Render);
         addCategory(Categories.Movement);
@@ -48,13 +51,24 @@ public final class NoxaraSidebar extends NoxaraPanel {
         addCategory(Categories.World);
         addCategory(Categories.Misc);
 
-        add(theme.label("NOXARA CLIENT").color(NoxaraStyle.SUBTLE)).padHorizontal(14).padTop(12);
-        add(theme.label("26.3 • TEST BUILD").color(NoxaraStyle.MUTED)).padHorizontal(14).padBottom(12);
+        add(theme.label("NOXARA CLIENT").color(NoxaraStyle.SUBTLE)).padHorizontal(12).padTop(7);
+        add(theme.label("26.3 • TEST BUILD").color(NoxaraStyle.MUTED)).padHorizontal(12).padBottom(8);
+    }
+
+    @Override
+    protected void onCalculateSize() {
+        maxHeight = Math.max(theme.scale(150), dashboard.contentHeight());
+        super.onCalculateSize();
+    }
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        NoxaraStyle.panel(renderer, x, y, width, height, theme.scale(11), NoxaraStyle.PANEL, true);
     }
 
     private void addCategory(Category category) {
         add(new NavigationButton(dashboard, category.name, category.name, category.icon.get()))
-            .expandX().padHorizontal(8).padVertical(1);
+            .expandX().padHorizontal(6).padVertical(1);
     }
 
     private static final class BrandHeader extends WWidget {
@@ -63,18 +77,18 @@ public final class NoxaraSidebar extends NoxaraPanel {
         @Override
         protected void onCalculateSize() {
             width = theme.scale(152);
-            height = theme.scale(56);
+            height = theme.scale(46);
         }
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            double s = theme.scale(36);
+            double s = theme.scale(31);
             double iconY = y + (height - s) / 2;
-            NoxaraStyle.roundedRect(renderer, x, iconY, s, s, theme.scale(10), ICON_BG);
+            NoxaraStyle.roundedRect(renderer, x, iconY, s, s, theme.scale(9), ICON_BG);
             renderer.quad(x + s * 0.12, iconY + s * 0.12, s * 0.76, s * 0.76, GuiRenderer.CIRCLE, NoxaraStyle.LAVENDER);
-            renderer.text("N", x + s / 2 - theme.textWidth("N") / 2, iconY + theme.scale(10), NoxaraStyle.TEXT, true);
-            renderer.text("Noxara", x + s + theme.scale(9), y + theme.scale(8), NoxaraStyle.TEXT, true);
-            renderer.text("CLIENT", x + s + theme.scale(10), y + theme.scale(31), NoxaraStyle.MUTED, false);
+            renderer.text("N", x + s / 2 - theme.textWidth("N") / 2, iconY + theme.scale(8), NoxaraStyle.TEXT, true);
+            renderer.text("Noxara", x + s + theme.scale(8), y + theme.scale(5), NoxaraStyle.TEXT, true);
+            renderer.text("CLIENT", x + s + theme.scale(9), y + theme.scale(26), NoxaraStyle.MUTED, false);
         }
     }
 
@@ -117,7 +131,7 @@ public final class NoxaraSidebar extends NoxaraPanel {
         @Override
         protected void onCalculateSize() {
             width = theme.scale(150);
-            height = theme.scale(34);
+            height = theme.scale(29);
         }
 
         @Override
@@ -125,22 +139,23 @@ public final class NoxaraSidebar extends NoxaraPanel {
             boolean selected = dashboard.page().equals(page);
             double target = selected ? 1 : mouseOver ? 0.48 : 0;
             hoverProgress += (target - hoverProgress) * Math.min(1, delta * 18);
+            hoverProgress = Math.max(0, Math.min(1, hoverProgress));
 
             if (hoverProgress > 0.005) {
                 NoxaraStyle.mix(fill, NoxaraStyle.CARD_HOVER, NoxaraStyle.NAV_SELECTED, hoverProgress);
-                NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(8), fill);
+                NoxaraStyle.roundedRect(renderer, x, y, width, height, theme.scale(7), fill);
             }
 
             if (selected) {
-                NoxaraStyle.roundedRect(renderer, x, y + theme.scale(7), theme.scale(3), height - theme.scale(14), theme.scale(2), NoxaraStyle.LAVENDER);
+                NoxaraStyle.roundedRect(renderer, x, y + theme.scale(6), theme.scale(3), height - theme.scale(12), theme.scale(2), NoxaraStyle.LAVENDER);
             }
 
             if (icon != null && !icon.isEmpty()) {
-                renderer.item(icon, (int) (x + theme.scale(10)), (int) (y + (height - theme.scale(16)) / 2), 1, false);
+                renderer.item(icon, (int) (x + theme.scale(8)), (int) (y + (height - theme.scale(16)) / 2), 1, false);
             }
 
             Color labelColor = selected ? NoxaraStyle.TEXT : (mouseOver ? NoxaraStyle.SUBTLE : NoxaraStyle.MUTED);
-            renderer.text(label, x + theme.scale(36), y + (height - theme.textHeight()) / 2, labelColor, false);
+            renderer.text(label, x + theme.scale(32), y + (height - theme.textHeight()) / 2, labelColor, false);
         }
 
         @Override
