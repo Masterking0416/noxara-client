@@ -64,6 +64,42 @@ public class Sprint extends Module {
         .build()
     );
 
+    // Wurst AutoSprint controls merged into this existing Sprint module.
+    private final Setting<Boolean> allDirections = sgGeneral.add(new BoolSetting.Builder()
+        .name("omnidirectional-sprint")
+        .description("Allows sprinting while moving sideways or backwards, independently of the selected sprint mode.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Boolean> hungrySprint = sgGeneral.add(new BoolSetting.Builder()
+        .name("hungry-sprint")
+        .description("Allows sprinting when hunger is too low for vanilla sprinting.")
+        .defaultValue(false)
+        .build()
+    );
+
+    private final Setting<Boolean> pauseWhileSneaking = sgGeneral.add(new BoolSetting.Builder()
+        .name("pause-while-sneaking")
+        .description("Do not force sprinting while the sneak key is held.")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> pauseWhileSwimming = sgGeneral.add(new BoolSetting.Builder()
+        .name("pause-while-swimming")
+        .description("Do not force sprinting while swimming.")
+        .defaultValue(true)
+        .build()
+    );
+
+    private final Setting<Boolean> pauseUnderwater = sgGeneral.add(new BoolSetting.Builder()
+        .name("pause-underwater")
+        .description("Do not force sprinting underwater unless flying.")
+        .defaultValue(true)
+        .build()
+    );
+
     public Sprint() {
         super(Categories.Movement, "sprint", "Automatically sprints.");
     }
@@ -96,8 +132,11 @@ public class Sprint extends Module {
 
     public boolean shouldSprint() {
         if (mc.gui.screen() != null && !Modules.get().get(GUIMove.class).sprint.get()) return false;
+        if (pauseWhileSneaking.get() && mc.options.keyShift.isDown()) return false;
+        if (pauseWhileSwimming.get() && mc.player.isSwimming()) return false;
+        if (pauseUnderwater.get() && mc.player.isUnderWater() && !mc.player.getAbilities().flying) return false;
 
-        float movement = mode.get() == Mode.Rage
+        float movement = (mode.get() == Mode.Rage || allDirections.get())
             ? (Math.abs(mc.player.zza) + Math.abs(mc.player.xxa))
             : mc.player.zza;
 
@@ -107,7 +146,7 @@ public class Sprint extends Module {
 
         boolean strictSprint = !(mc.player.isInShallowWater())
             && !mc.player.isMobilityRestricted()
-            && mc.player.isPassenger() ? (mc.player.getVehicle().canSprint() && mc.player.getVehicle().isLocalInstanceAuthoritative()) : mc.player.getFoodData().hasEnoughFood()
+            && mc.player.isPassenger() ? (mc.player.getVehicle().canSprint() && mc.player.getVehicle().isLocalInstanceAuthoritative()) : (hungrySprint.get() || mc.player.getFoodData().hasEnoughFood())
                                                                                                                                          && (!mc.player.horizontalCollision || mc.player.minorHorizontalCollision);
 
         return isActive() && (mode.get() == Mode.Rage || strictSprint);
