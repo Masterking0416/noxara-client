@@ -34,3 +34,11 @@ jobs:
 
       - name: Build
         run: ./gradlew build -Pcommit=${{ github.sha }} -Pbuild_number=ci
+
+      - name: Upload Noxara client JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: noxara-client-26.3-test-build
+          path: build/libs/noxara-client-*-ci.jar
+          if-no-files-found: error
+          retention-days: 14
