@@ -1,6 +1,9 @@
 /*
  * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client).
  * Copyright (c) Meteor Development.
+ *
+ * The extended knockback scale incorporates Wurst7 AntiKnockback-style
+ * reduction/amplification controls into Meteor's existing Velocity module.
  */
 
 package meteordevelopment.meteorclient.systems.modules.movement;
@@ -31,18 +34,20 @@ public class Velocity extends Module {
 
     public final Setting<Double> knockbackHorizontal = sgGeneral.add(new DoubleSetting.Builder()
         .name("knockback-horizontal")
-        .description("How much horizontal knockback you will take.")
+        .description("Horizontal knockback scale: 0% disables added knockback, 100% is normal, negative values reverse the change, and values above 100% amplify it.")
         .defaultValue(0)
-        .sliderMax(1)
+        .range(-1, 2)
+        .sliderRange(-1, 2)
         .visible(knockback::get)
         .build()
     );
 
     public final Setting<Double> knockbackVertical = sgGeneral.add(new DoubleSetting.Builder()
         .name("knockback-vertical")
-        .description("How much vertical knockback you will take.")
+        .description("Vertical knockback scale: 0% disables added knockback, 100% is normal, negative values reverse the change, and values above 100% amplify it.")
         .defaultValue(0)
-        .sliderMax(1)
+        .range(-1, 2)
+        .sliderRange(-1, 2)
         .visible(knockback::get)
         .build()
     );
