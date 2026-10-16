@@ -1,6 +1,6 @@
 # Noxara module integration plan
 
-Noxara is intended to combine Meteor's module system with selected Wurst7 features, without registering two modules that perform the same job. This is a working plan, not a claim that all listed features are already implemented.
+Noxara's target is a full feature audit and merge of Meteor and Wurst7, not a small selection. Overlapping behavior should share one Noxara module/settings page; genuinely unique functionality from either client should remain available as native Noxara modules. This is a working plan, not a claim that all features are already implemented.
 
 ## Integration rules
 
@@ -17,23 +17,15 @@ Noxara is intended to combine Meteor's module system with selected Wurst7 featur
 - **FastUse + FastPlace:** keeps Meteor's item selection and cooldown controls. Adds an optional Wurst-style right-click-delay reset, with a setting to restrict it to holding blocks. It is one combined module rather than two competing toggles.
 - **Noxara GUI foundation:** dark graphite surfaces, violet accents, improved contrast, left-aligned module labels, and category icons are the current baseline. The custom layout, smoother animations and full visual polish are still outstanding.
 
-## Next implementation queue
+## Full inventory and integration sequence
 
-### High priority: useful unique features
-- AutoFarm / crop harvesting
-- AutoLibrarian / villager trade helper
-- FastLadder
-- AutoPotion and AutoDrop
-- AutoSwitch and AutoSword behavior, after checking what existing Meteor modules already cover
-- Tunneller and the more configurable excavation/building workflows
-- Navigator / searchable feature browser improvements
-- Missing visual options such as NoFog, NoHurtCam and extra ESP/radar overlays
+The complete Wurst registered-feature audit is tracked in WURST_METEOR_FEATURE_MATRIX.md. That matrix defines the full scope; the short initial list above is not the whole target.
 
-### Merge and settings audit
-- Compare every Wurst feature to Meteor's existing modules by behavior, not only by module name.
-- Extend existing modules where a setting meaningfully fits.
-- Keep genuinely different variants separate but explain their distinction in the module description.
-- Review movement, combat, inventory, rendering, world and utility categories in batches.
+1. Audit every Wurst entry against Meteor by behavior, settings and dependencies.
+2. Merge shared behavior into one module/settings page instead of separate duplicate toggles.
+3. Keep unique Wurst features as native Noxara modules where technically compatible, and preserve Meteor-only functionality too.
+4. Process modules in tested category-sized batches, compiling and validating in-game after each batch.
+5. Keep a clear status for each feature so nothing is silently omitted.
 
 ### Exclusions from automatic bulk copying
 - Do not blindly copy all source files or dependencies from Wurst or third-party addons.
