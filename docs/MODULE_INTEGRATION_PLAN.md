@@ -16,6 +16,8 @@ Noxara's target is a full feature audit and merge of Meteor and Wurst7, not a sm
 - **AutoTool:** keeps Meteor's enchantment preference, Ender Chest/Silk Touch rule, Fortune rule, anti-break percentage, switch delay and whitelist/blacklist. Adds Wurst-inspired optional sword selection, a non-damageable/empty-hotbar fallback, and a remaining-durability repair threshold.
 - **FastUse + FastPlace:** keeps Meteor's item selection and cooldown controls. Adds an optional Wurst-style right-click-delay reset, with a setting to restrict it to holding blocks. It is one combined module rather than two competing toggles.
 - **AutoSwim:** integrated Wurst's forward swimming sprint behavior as an optional `auto-swim` setting in Meteor's existing Sprint module, avoiding a duplicate module toggle. Build and in-game validation pending.
+- **3x3:** added a dedicated World module that packet-attempts a 3×3 plane around the block under the crosshair, respecting breakability and a configurable reach cap. Server permissions, mining rules, and anti-cheat can still reject instant-break attempts; Java 25 build and in-game validation pending.
+- **Noxara category navigation:** reordered the sidebar into a more natural Combat → Movement → Player → Render → World → Misc flow; module entries remain alphabetically sorted within each view.
 - **Noxara GUI foundation:** dark graphite surfaces, violet accents, improved contrast, left-aligned module labels, and category icons are the current baseline. The custom layout, smoother animations and full visual polish are still outstanding.
 
 ## Full inventory and integration sequence

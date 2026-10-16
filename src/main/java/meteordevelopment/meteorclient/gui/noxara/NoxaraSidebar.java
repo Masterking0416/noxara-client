@@ -101,9 +101,9 @@ public final class NoxaraSidebar extends WContainer {
 
             add(new SectionLabel("CATEGORIES")).padHorizontal(9).padTop(7).padBottom(2);
             addCategory(Categories.Combat);
-            addCategory(Categories.Render);
             addCategory(Categories.Movement);
             addCategory(Categories.Player);
+            addCategory(Categories.Render);
             addCategory(Categories.World);
             addCategory(Categories.Misc);
         }

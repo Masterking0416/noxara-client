@@ -569,6 +569,7 @@ public class Modules extends System<Modules> {
         add(new StashFinder());
         add(new SpawnProofer());
         add(new Timer());
+        add(new ThreeByThree());
         add(new VeinMiner());
 
         if (BaritoneUtils.IS_AVAILABLE) {
