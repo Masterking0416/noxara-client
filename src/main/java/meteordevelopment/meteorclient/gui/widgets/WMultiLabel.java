@@ -19,7 +19,6 @@ public abstract class WMultiLabel extends WLabel {
         this.maxWidth = maxWidth;
     }
 
-    @Override
     /** Update the wrapping width when its resizable parent changes width. */
     public void setMaxWidth(double maxWidth) {
         if (Math.abs(this.maxWidth - maxWidth) < 0.5) return;
@@ -27,6 +26,7 @@ public abstract class WMultiLabel extends WLabel {
         invalidate();
     }
 
+    @Override
     protected void onCalculateSize() {
         lines.clear();
 
