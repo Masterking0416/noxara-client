@@ -1,60 +1,44 @@
+# Noxara Client
 
-<p align="center">
-<img src="https://meteorclient.com/icon.png" alt="meteor-client-logo" width="15%"/>
-</p>
+Noxara Client is an independent, open-source Fabric client derived from [Meteor Client](https://github.com/MeteorDevelopment/meteor-client), targeting **Minecraft Java Edition 26.3**.
 
-<h1 align="center">Meteor</h1>
-<p align="center">A Minecraft Fabric Utility Mod for anarchy servers.</p>
+The 26.3 compatibility base follows the work in [MeteorDevelopment/meteor-client PR #6698](https://github.com/MeteorDevelopment/meteor-client/pull/6698) by dekrom. That pull request is still open upstream; Noxara runs its own build verification and must be tested independently.
 
-<div align="center">
-    <a href="https://discord.gg/bBGQZvd"><img src="https://img.shields.io/discord/689197705683140636?logo=discord" alt="Discord"/></a>
-    <br>
-    <img src="https://img.shields.io/github/last-commit/MeteorDevelopment/meteor-client" alt="GitHub last commit"/>
-    <img src="https://img.shields.io/github/commit-activity/w/MeteorDevelopment/meteor-client" alt="GitHub commit activity"/>
-    <img src="https://img.shields.io/github/contributors/MeteorDevelopment/meteor-client" alt="GitHub contributors"/>
-    <br>
-    <img src="https://img.shields.io/github/languages/code-size/MeteorDevelopment/meteor-client" alt="GitHub code size in bytes"/>
-    <img src="https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/MeteorDevelopment/meteor-client/badge?filter=.java$&label=lines%20of%20code&color=blue" alt="GitHub lines of code"/>
-</div>
+> **Development status:** the 26.3 port is under active integration. A passing CI build is necessary, but not sufficient, to call a version playable; runtime launch and mixin checks are still required.
 
-## Usage
+## Development target
 
-### Building
-- Clone this repository
-- Run `./gradlew build`
+- Minecraft Java Edition: 26.3
+- Mod loader: Fabric
+- Java toolchain: 25
+- Build system: Gradle and Fabric Loom
+- GUI direction: dark graphite, violet accent, restrained motion, readable type
 
-### Installation
-Follow the [guide](https://meteorclient.com/faq/installation) on the wiki.
+## Build locally
 
-## Contributions
-We will review and help with all reasonable pull requests as long as the guidelines below are met.
+1. Install a JDK 25 distribution.
+2. Clone this repository and check out the `noxara/mc-26.3-tested-port` branch.
+3. Run the Gradle build:
+   - Windows: `gradlew.bat build`
+   - Linux/macOS: `./gradlew build`
 
-- The license header must be applied to all java source code files.
-- IDE or system-related files should be added to the `.gitignore`, never committed in pull requests.
-- In general, check existing code to make sure your code matches relatively close to the code already in the project.
-- Favour readability over compactness.
-- If you need help, check out the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) for a reference.
+The compiled JAR is placed under `build/libs`. Test it in a clean Minecraft 26.3 Fabric instance before sharing it.
 
-## Bugs and Suggestions
-Bug reports and suggestions should be made in this repo's [issue tracker](https://github.com/MeteorDevelopment/meteor-client/issues) using the templates provided.  
-Please provide as much information as you can to best help us understand your issue and give a better chance of it being resolved.
+## Roadmap
 
-## Donations
-All of our work is completely free and non-profit (donations pay only for hosting costs), therefore we are very grateful for all donations made to support us in running our community.  
-Donations can be made via our [website](https://meteorclient.com/donate) and the minimum amount to get donor benefits is €5.  
-You will be rewarded with a role on our Discord server and a customisable in-game cape.  
-⚠️ _Make sure to create a Meteor account and link your Discord and Minecraft accounts to fully experience your rewards._ ⚠️
+1. Keep the Minecraft 26.3 build compiling and fix API/mixin incompatibilities.
+2. Redesign the ClickGUI and HUD while retaining Meteor's module/settings foundation.
+3. Port selected Wurst features one by one, with compatibility testing and attribution.
+4. Evaluate Trouser-Streak integration separately. Its GitHub repository does not currently declare a license, so its code must not be copied or redistributed until the applicable permission is established.
+5. Produce release builds only after clean-launch testing.
 
-## Credits
-[Cabaletta](https://github.com/cabaletta) and [WagYourTail](https://github.com/wagyourtail) for [Baritone](https://github.com/cabaletta/baritone)  
-The [Fabric Team](https://github.com/FabricMC) for [Fabric](https://github.com/FabricMC/fabric-loader) and [Yarn](https://github.com/FabricMC/yarn)
+## Upstream projects and licensing
 
-## Licensing
-This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html). 
+This repository contains code derived from Meteor Client, which is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. The upstream license is retained in `LICENSE`. This derivative remains under GPL-3.0; comply with source-disclosure and attribution requirements when redistributing modified builds.
 
-If you use **ANY** code from the source:
-- You must disclose the source code of your modified work and the source code you took from this project. This means you are not allowed to use code from this project (even partially) in a closed-source and/or obfuscated application.
-- You must state clearly and obviously to all end users that you are using code from this project.
-- Your application must also be licensed under the same license.
+- [Meteor Client](https://github.com/MeteorDevelopment/meteor-client) — primary codebase.
+- [Meteor 26.3 port PR #6698](https://github.com/MeteorDevelopment/meteor-client/pull/6698) — current compatibility port reference.
+- [Wurst7](https://github.com/Wurst-Imperium/Wurst7) — candidate source for selected feature ports, subject to compatibility and license review.
+- [Trouser-Streak](https://github.com/etianl/Trouser-Streak) — planned integration pending a clear license/permission review.
 
-*If you have any other questions, check our [FAQ](https://meteorclient.com/faq) or ask in our [Discord](https://meteorclient.com/discord) server.*
+Noxara is an independent community fork and is not an official Meteor Development or Wurst release.
