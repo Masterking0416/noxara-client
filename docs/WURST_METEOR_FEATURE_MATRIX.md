@@ -180,10 +180,12 @@ The starting Meteor module registry is the Modules.java file in the source tree.
 
 ## First integration commits
 
-- AutoTool additions: https://github.com/Masterking0416/noxara-client/commit/b59b1a737196aad5041f317bc57eec5736b10d6f — latest build/runtime validation pending.
-- FastUse/FastPlace options: https://github.com/Masterking0416/noxara-client/commit/1c4d0ae1ce67cd755587bd590442ab8a405a4f1d
-- Minecraft tick integration: https://github.com/Masterking0416/noxara-client/commit/c69e3518c2df4df5af788381d65d64e57d32273a — latest build/runtime validation pending.
-- GUI changes remain a foundation; they are not the finished custom ClickGUI.
+- AutoTool + Wurst-inspired options: https://github.com/Masterking0416/noxara-client/commit/b59b1a737196aad5041f317bc57eec5736b10d6f — latest build/runtime validation pending.
+- FastUse/FastPlace combined settings: https://github.com/Masterking0416/noxara-client/commit/1c4d0ae1ce67cd755587bd590442ab8a405a4f1d
+- Minecraft right-click timer integration: https://github.com/Masterking0416/noxara-client/commit/c69e3518c2df4df5af788381d65d64e57d32273a
+- Sprint now includes Wurst AutoSprint-style omnidirectional/hungry options and pause controls: https://github.com/Masterking0416/noxara-client/commit/21b6e3bc3da895e99480a67084d4cfe4dfc4ff21
+- Velocity's knockback sliders now allow reduction, amplification and reverse values: https://github.com/Masterking0416/noxara-client/commit/5cd1eae0e6cdab0b2096f0fe0ad0c3d96fb2adc0
+- These are initial integrations, not yet confirmed by a build and runtime test. GUI work remains a foundation, not the finished custom ClickGUI.
 
 ## Next integration sequence
 
